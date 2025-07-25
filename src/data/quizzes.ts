@@ -5,7 +5,7 @@ export const quizCategories: QuizCategory[] = [
     title: 'South African History',
     slug: 'sa-history',
     description: 'From ancient civilizations to the dawn of democracy, test your historical knowledge.',
-    imageHint: 'historical document',
+    imageHint: 'ancient map',
     questions: [
       {
         id: 'hist-q1',
@@ -34,7 +34,7 @@ export const quizCategories: QuizCategory[] = [
     title: 'Wildlife & Nature',
     slug: 'wildlife-nature',
     description: 'Explore the diverse flora and fauna of South Africa, from the Big Five to the fynbos.',
-    imageHint: 'lion safari',
+    imageHint: 'savanna wildlife',
     questions: [
       {
         id: 'wild-q1',
@@ -56,7 +56,7 @@ export const quizCategories: QuizCategory[] = [
     title: 'Famous Landmarks',
     slug: 'landmarks',
     description: 'How well do you know the iconic sites of South Africa? From mountains to monuments.',
-    imageHint: 'cape town',
+    imageHint: 'Table Mountain',
     questions: [
       {
         id: 'land-q1',
@@ -78,7 +78,7 @@ export const quizCategories: QuizCategory[] = [
     title: 'Famous South Africans',
     slug: 'famous-south-africans',
     description: 'Test your knowledge on the rainbow nation\'s most influential and celebrated figures.',
-    imageHint: 'Nelson Mandela portrait',
+    imageHint: 'portrait famous person',
     questions: [
       {
         id: 'fame-q1',
@@ -100,7 +100,7 @@ export const quizCategories: QuizCategory[] = [
     title: 'South African Languages & Culture',
     slug: 'languages-culture',
     description: 'From "howzit" to "braai," explore the rich tapestry of languages and cultures.',
-    imageHint: 'Zulu beadwork',
+    imageHint: 'cultural artifacts',
     questions: [
       {
         id: 'lang-q1',
@@ -122,7 +122,7 @@ export const quizCategories: QuizCategory[] = [
     title: 'South African Music & Arts',
     slug: 'music-arts',
     description: 'Discover the vibrant rhythms and creative expressions of South Africa.',
-    imageHint: 'djembe drum',
+    imageHint: 'vibrant art',
     questions: [
       {
         id: 'art-q1',
