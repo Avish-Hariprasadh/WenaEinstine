@@ -31,7 +31,7 @@ export default function Home() {
           </h1>
         </div>
         <p className="text-lg md:text-xl text-muted-foreground font-body max-w-2xl">
-          Think you know Mzansi? Put your knowledge to the test with our fun quizzes and get AI-powered tips to become a true expert!
+          Think you know Mzansi? Put your knowledge to the test with our fun quizzes to become a true expert!
         </p>
       </header>
 
