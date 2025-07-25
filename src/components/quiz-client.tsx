@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { QuizCategory } from '@/types';
@@ -9,6 +10,7 @@ import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, ArrowRight, TimerIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 type QuizClientProps = {
   quiz: QuizCategory;
@@ -101,24 +103,40 @@ export default function QuizClient({ quiz }: QuizClientProps) {
   };
 
   const timerColor = timer <= 3 ? 'text-destructive' : 'text-muted-foreground';
+  const timerProgress = (timer / 10) * 100;
+  
+  const timerBarColor = cn({
+    "bg-green-500": timer > 6,
+    "bg-yellow-500": timer > 3 && timer <= 6,
+    "bg-red-500": timer <= 3,
+  });
 
   return (
     <div className="container mx-auto max-w-3xl py-8 md:py-12">
       <Card className="shadow-2xl border-2 border-primary/20">
         <CardHeader>
-          <div className="flex justify-between items-center mb-4">
-            <Progress value={progress} className="w-full h-3 bg-secondary" />
-            <div className={`flex items-center font-bold text-lg ml-4 ${timerColor}`}>
-                <TimerIcon className="mr-2" />
-                <span>{timer}s</span>
+            <div className='mb-4 space-y-3'>
+                <div className='flex justify-between items-center text-sm text-muted-foreground'>
+                    <span>Overall Progress</span>
+                    <span>Question {currentQuestionIndex + 1} of {quiz.questions.length}</span>
+                </div>
+                <Progress value={progress} className="w-full h-2" />
             </div>
-          </div>
-          <CardTitle className="font-headline text-2xl md:text-3xl text-center">
+
+            <div className='mb-4 space-y-2'>
+                <div className="flex justify-between items-center">
+                    <div className={`flex items-center font-bold ${timerColor}`}>
+                        <TimerIcon className="mr-2 h-5 w-5" />
+                        <span className='text-lg'>Time remaining: {timer}s</span>
+                    </div>
+                </div>
+                <Progress value={timerProgress} className="h-3 [&>div]:transition-all [&>div]:duration-1000 [&>div]:ease-linear" indicatorClassName={timerBarColor} />
+            </div>
+
+          <CardTitle className="font-headline text-2xl md:text-3xl text-center pt-4 border-t">
             {quiz.title}
           </CardTitle>
-          <CardDescription className="text-center text-lg">
-            Question {currentQuestionIndex + 1} of {quiz.questions.length}
-          </CardDescription>
+
         </CardHeader>
         <CardContent className="px-6 py-8 md:px-8 md:py-10">
           <div key={currentQuestion.id} className="animate-in fade-in duration-500">
