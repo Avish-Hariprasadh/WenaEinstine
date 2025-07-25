@@ -1,14 +1,14 @@
 'use client';
 
 import type { QuizCategory } from '@/types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, TimerIcon } from 'lucide-react';
 
 type QuizClientProps = {
   quiz: QuizCategory;
@@ -19,40 +19,100 @@ export default function QuizClient({ quiz }: QuizClientProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
   const [progress, setProgress] = useState(0);
+  const [timer, setTimer] = useState(10);
+  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const currentQuestion = quiz.questions[currentQuestionIndex];
+  const isLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
+
+  const resetTimer = () => {
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+    }
+    setTimer(10);
+  };
+
+  const handleNext = () => {
+    resetTimer();
+    if (!isLastQuestion) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    } else {
+      handleSubmit();
+    }
+  };
 
   useEffect(() => {
     setProgress(((currentQuestionIndex + 1) / quiz.questions.length) * 100);
   }, [currentQuestionIndex, quiz.questions.length]);
 
+  useEffect(() => {
+    if (userAnswers[currentQuestion.id]) {
+        if (timerIntervalRef.current) {
+            clearInterval(timerIntervalRef.current);
+        }
+        return;
+    }
+
+    resetTimer();
+
+    timerIntervalRef.current = setInterval(() => {
+      setTimer((prevTimer) => {
+        if (prevTimer === 1) {
+          handleNext();
+          return 10;
+        }
+        return prevTimer - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+      }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentQuestionIndex]);
+  
+
   const handleAnswerSelect = (questionId: string, answer: string) => {
     setUserAnswers((prev) => ({ ...prev, [questionId]: answer }));
-  };
-
-  const handleNext = () => {
-    if (currentQuestionIndex < quiz.questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
     }
+    // Automatically move to next question after a short delay
+    setTimeout(() => {
+        handleNext();
+    }, 500);
   };
 
   const handlePrevious = () => {
+    resetTimer();
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
 
   const handleSubmit = () => {
+    if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+    }
     localStorage.setItem(`quizAnswers-${quiz.slug}`, JSON.stringify(userAnswers));
     router.push(`/quiz/${quiz.slug}/results`);
   };
 
-  const currentQuestion = quiz.questions[currentQuestionIndex];
-  const isLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
+  const timerColor = timer <= 3 ? 'text-destructive' : 'text-muted-foreground';
 
   return (
     <div className="container mx-auto max-w-3xl py-8 md:py-12">
       <Card className="shadow-2xl border-2 border-primary/20">
         <CardHeader>
-          <Progress value={progress} className="w-full mb-4 h-3 bg-secondary" />
+          <div className="flex justify-between items-center mb-4">
+            <Progress value={progress} className="w-full h-3 bg-secondary" />
+            <div className={`flex items-center font-bold text-lg ml-4 ${timerColor}`}>
+                <TimerIcon className="mr-2" />
+                <span>{timer}s</span>
+            </div>
+          </div>
           <CardTitle className="font-headline text-2xl md:text-3xl text-center">
             {quiz.title}
           </CardTitle>
@@ -69,12 +129,13 @@ export default function QuizClient({ quiz }: QuizClientProps) {
               value={userAnswers[currentQuestion.id] || ''}
               onValueChange={(value) => handleAnswerSelect(currentQuestion.id, value)}
               className="space-y-4"
+              disabled={!!userAnswers[currentQuestion.id]}
             >
               {currentQuestion.options.map((option, index) => (
                 <Label
                   key={index}
                   htmlFor={`${currentQuestion.id}-${index}`}
-                  className={`flex items-center space-x-4 p-4 rounded-lg border-2 transition-all cursor-pointer hover:border-primary ${
+                  className={`flex items-center space-x-4 p-4 rounded-lg border-2 transition-all ${!!userAnswers[currentQuestion.id] ? 'cursor-not-allowed' : 'cursor-pointer hover:border-primary'} ${
                     userAnswers[currentQuestion.id] === option.text
                       ? 'border-primary bg-primary/10'
                       : 'border-border'
@@ -93,11 +154,11 @@ export default function QuizClient({ quiz }: QuizClientProps) {
             Previous
           </Button>
           {isLastQuestion ? (
-            <Button size="lg" onClick={handleSubmit} disabled={!userAnswers[currentQuestion.id]}>
+            <Button size="lg" onClick={handleSubmit}>
               View Results
             </Button>
           ) : (
-            <Button variant="default" onClick={handleNext} disabled={!userAnswers[currentQuestion.id]}>
+            <Button variant="default" onClick={handleNext}>
               Next
               <ArrowRight className="ml-2" />
             </Button>
