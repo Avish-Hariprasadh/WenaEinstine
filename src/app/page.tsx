@@ -40,13 +40,17 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {quizCategories.map((category) => {
             const IconComponent = iconMap[category.title] || Lightbulb;
+            const imageSrc = category.slug === 'sa-history' 
+              ? '/images/sa-history.png'
+              : `https://placehold.co/600x400.png`;
+
             return (
               <Link href={`/quiz/${category.slug}`} key={category.slug} className="group">
                 <Card className="h-full flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2 hover:border-primary">
                   <CardHeader>
                     <div className="relative h-40 w-full mb-4 rounded-t-lg overflow-hidden">
                        <Image
-                          src={`https://placehold.co/600x400.png?text=${encodeURIComponent(category.title)}`}
+                          src={imageSrc}
                           alt={category.title}
                           data-ai-hint={category.imageHint}
                           fill
