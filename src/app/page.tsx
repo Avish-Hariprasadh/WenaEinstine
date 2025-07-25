@@ -40,7 +40,7 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {quizCategories.map((category) => {
             const IconComponent = iconMap[category.title] || Lightbulb;
-            const imageSrc = `https://placehold.co/600x400.png`;
+            const imageSrc = `https://placehold.co/600x400.png?text=${encodeURIComponent(category.title)}`;
 
             return (
               <Link href={`/quiz/${category.slug}`} key={category.slug} className="group">
@@ -48,7 +48,7 @@ export default function Home() {
                   <CardHeader>
                     <div className="relative h-40 w-full mb-4 rounded-t-lg overflow-hidden">
                        <Image
-                          src={imageSrc}
+                          src={`https://placehold.co/600x400.png`}
                           alt={category.title}
                           data-ai-hint={category.imageHint}
                           fill
