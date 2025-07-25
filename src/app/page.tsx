@@ -13,10 +13,10 @@ import Image from 'next/image';
 const iconMap: Record<string, LucideIcon> = {
   'South African History': require('lucide-react').BookOpenText,
   'Wildlife & Nature': require('lucide-react').Leaf,
-  'Geography': require('lucide-react').Globe,
   'Famous Landmarks': require('lucide-react').Landmark,
-  'Arts & Culture': require('lucide-react').Palette,
-  'Music & Entertainment': require('lucide-react').Music,
+  'Famous South Africans': require('lucide-react').Users,
+  'South African Languages & Culture': require('lucide-react').Languages,
+  'South African Music & Arts': require('lucide-react').Music,
 };
 
 export default function Home() {
