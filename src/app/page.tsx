@@ -46,7 +46,7 @@ export default function Home() {
                   <CardHeader>
                     <div className="relative h-40 w-full mb-4 rounded-t-lg overflow-hidden">
                        <Image
-                          src={`https://placehold.co/600x400.png?text=${encodeURIComponent(category.title)}`}
+                          src={`https://placehold.co/600x400.png`}
                           alt={category.title}
                           data-ai-hint={category.imageHint}
                           fill
