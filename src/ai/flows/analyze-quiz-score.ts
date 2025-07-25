@@ -30,7 +30,12 @@ export async function analyzeQuizScore(input: AnalyzeQuizScoreInput): Promise<An
 
 const analyzeQuizScorePrompt = ai.definePrompt({
   name: 'analyzeQuizScorePrompt',
-  input: {schema: AnalyzeQuizScoreInputSchema},
+  input: {schema: z.object({
+    quizCategory: z.string(),
+    score: z.number(),
+    userAnswers: z.string(),
+    correctAnswers: z.string(),
+  })},
   output: {schema: AnalyzeQuizScoreOutputSchema},
   prompt: `You are an AI quiz score analyzer. You will receive the category of the quiz, the user's score, the user's answers, and the correct answers.
 
@@ -38,8 +43,8 @@ const analyzeQuizScorePrompt = ai.definePrompt({
 
   Quiz Category: {{{quizCategory}}}
   User Score: {{{score}}}
-  User Answers: {{JSON.stringify userAnswers}}
-  Correct Answers: {{JSON.stringify correctAnswers}}
+  User Answers: {{{userAnswers}}}
+  Correct Answers: {{{correctAnswers}}}
 
   Tips:`,
 });
@@ -51,7 +56,12 @@ const analyzeQuizScoreFlow = ai.defineFlow(
     outputSchema: AnalyzeQuizScoreOutputSchema,
   },
   async input => {
-    const {output} = await analyzeQuizScorePrompt(input);
+    const {output} = await analyzeQuizScorePrompt({
+      quizCategory: input.quizCategory,
+      score: input.score,
+      userAnswers: JSON.stringify(input.userAnswers),
+      correctAnswers: JSON.stringify(input.correctAnswers),
+    });
     return output!;
   }
 );
